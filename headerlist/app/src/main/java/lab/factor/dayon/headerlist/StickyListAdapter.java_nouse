@@ -1,0 +1,144 @@
+package lab.factor.dayon.headerlist;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.SectionIndexer;
+import android.widget.TextView;
+
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+
+/**
+ * Created by hassanhussain on 8/19/2017.
+ */
+
+public class StickyListAdapter extends BaseAdapter
+        implements StickyListHeadersAdapter, SectionIndexer {
+    LayoutInflater mInflater = null;
+    Context context = null;
+    EventsArrayList eventArray = null;
+    boolean isEmptySections = true;
+
+    StickyListAdapter(EventsArrayList ets, Context ctxt){
+        Log.d("debug", "Adapter - construct");
+        eventArray = ets;
+        context = ctxt;
+        mInflater = LayoutInflater.from(context);
+        isEmptySections = eventArray.getSectionCount() <= 0;
+    }
+
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup parent) {
+        Log.d("debug", "Adapter - getHeaderView + pos " + position);
+        DateHeaderViewHolder holder;
+
+        if (convertView == null) {
+            Log.d("debug", "Adapter - getHeaderView - new videw");
+            holder = new DateHeaderViewHolder();
+            convertView = mInflater.inflate(R.layout.header, parent, false);
+            holder.dateHeader = (TextView) convertView.findViewById(R.id.text1);
+            convertView.setTag(holder);
+        } else {
+            Log.d("debug", "Adapter - getHeaderView - reuse view");
+            holder = (DateHeaderViewHolder) convertView.getTag();
+        }
+
+        EventsArrayList.CalendarDateEvents eventDate = eventArray.getSectionByOffset(position);
+        Log.d("debug", "Adapter - getHeaderView - date : " + eventDate.toString());
+        holder.dateHeader.setText(eventDate.getDateString());
+
+        return convertView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        Log.d("debug", "Adapter - getHeaderID: ");
+        if(eventArray == null)
+            return 0;
+        return eventArray.getSectionId(position);
+    }
+
+    @Override
+    public int getCount() {
+        Log.d("debug", "Adapter - getCount: ");
+        if(eventArray == null)
+            return 0;
+        return eventArray.getItemsCount();
+    }
+
+    @Override
+    public Object getItem(int i) {
+        Log.d("debug", "Adapter - getIem: ");
+        if(eventArray == null)
+            return null;
+        return eventArray.getEventObject(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        Log.d("debug", "Adapter - getIemId: " + i);
+        return i;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("debug", "Adapter - getView + pos " + position);
+        EventViewHolder holder;
+
+        if (convertView == null) {
+            Log.d("debug", "Adapter - getView + nnew view " + position);
+            holder = new EventViewHolder();
+            convertView = mInflater.inflate(R.layout.event, parent, false);
+            holder.eventText = (TextView) convertView.findViewById(R.id.text1);
+            convertView.setTag(holder);
+        } else {
+            Log.d("debug", "Adapter - getView + reuse view " + position);
+            holder = (EventViewHolder) convertView.getTag();
+        }
+
+        Object eventDate = eventArray.getEventObject(position);
+        if(eventDate instanceof EventsArrayList.NoEvents)
+            holder.eventText.setText("NO NO NO NO");
+        else
+            holder.eventText.setText("YES YES YES");
+        Log.d("debug", "Adapter - getView + done " + position);
+        return convertView;
+    }
+
+    @Override
+    public Object[] getSections() {
+        Log.d("debug", "Adapter - getSections ");
+        if(eventArray == null)
+            return new Object[0];
+        return eventArray.getListAsArray();
+    }
+
+    @Override
+    public int getPositionForSection(int i) {
+        Log.d("debug", "Adapter - getPositionForSection +  " + i);
+        if(eventArray == null || i >= eventArray.getSectionCount())
+            return 0;
+        // this returns the position for given section.
+        return eventArray.getSectionId(i);
+    }
+
+    @Override
+    public int getSectionForPosition(int i) {
+        Log.d("debug", "Adapter - getSectionForPosition +  " + i);
+        if(eventArray == null)
+            return 0;
+        // this returns the section id for given position.
+        return eventArray.getSectionByOffset(i).getSectionId();
+    }
+
+    class DateHeaderViewHolder {
+        TextView dateHeader;
+    }
+
+    class EventViewHolder {
+        TextView eventText;
+    }
+}

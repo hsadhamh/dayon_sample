@@ -1,0 +1,230 @@
+Index: app/src/main/java/lab/factor/dayon/headerlist/EventsArrayList.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/lab/factor/dayon/headerlist/EventsArrayList.java	(revision )
++++ app/src/main/java/lab/factor/dayon/headerlist/EventsArrayList.java	(revision )
+@@ -1,10 +1,13 @@
+ package lab.factor.dayon.headerlist;
+ 
++import android.util.Log;
++
+ import org.joda.time.Days;
+ import org.joda.time.LocalDate;
+ 
+ import java.text.ParseException;
+ import java.util.ArrayList;
++import java.util.HashMap;
+ import java.util.List;
+ 
+ /**
+@@ -12,25 +15,41 @@
+  */
+ 
+ public class EventsArrayList {
++    private List<Object> listItems = new ArrayList<>();
++    private HashMap<String, Integer> sectionMap = new HashMap<>();
++
++    public List<Object> getListItems() { return listItems; }
++    public void setListItems(List<Object> listItems) { this.listItems = listItems; }
++
++    public HashMap<String, Integer> getSectionMap() { return sectionMap; }
++    public void setSectionMap(HashMap<String, Integer> sectionMap) { this.sectionMap = sectionMap; }
++
++
++
++/*    *COMPLETE SHIT*
+     private List<CalendarDateEvents> dateList = new ArrayList<>();
+     private List<CalendarDateEvents> getDateList(){ return dateList; }
+ 
+     private CalendarDateEvents findByDate(String date){
++        Log.d("debug", "Find by Date - " + date);
+         for (CalendarDateEvents it : dateList) {
+-            if(it.getDateString().equals(date))
++            if(it.getDateString().equals(date)) {
++                Log.d("debug", "Found date - " + it.getDateString());
+                 return it;
+-        }
++            }
++        }
+         return null;
+     }
+     private CalendarDateEvents findRecursiveByOffset(int search, int start, int end) {
+-
++        Log.d("debug", "findRecursiveByOffset - search " + search + " start - " + start + " end - " + end);
+         int middle = (start + end)/2;
+         CalendarDateEvents midEvent = dateList.get(middle);
+-
++        Log.d("debug", "findRecursiveByOffset - Mid " + midEvent.toString());
+         if(middle+1 > dateList.size() -1)
+             return midEvent;
+ 
+         CalendarDateEvents midTrailEvent = dateList.get(middle+1);
++        Log.d("debug", "findRecursiveByOffset - Mid " + midTrailEvent.toString());
+ 
+         if(midEvent.getOffsetStart() >= search && midTrailEvent.getOffsetStart() < search)
+             return midEvent;
+@@ -43,7 +62,7 @@
+         return null;
+     }
+     private CalendarDateEvents findRecursiveBySection(int search, int start, int end) {
+-
++        Log.d("debug", "findRecursiveBySection - search " + search + " start -" + start + " end -" + end);
+         int middle = (start + end)/2;
+         CalendarDateEvents midEvent = dateList.get(middle);
+ 
+@@ -52,7 +71,7 @@
+ 
+         if(midEvent.getSectionId() == search)
+             return midEvent;
+-
++        Log.d("debug", "findRecursiveBySection - mid  " + midEvent.toString());
+         if(search > midEvent.getSectionId())
+             return findRecursiveByOffset(search, middle+1, end);
+         else if(search < midEvent.getSectionId())
+@@ -60,6 +79,7 @@
+         return null;
+     }
+     public CalendarDateEvents find(int type, String searchItem){
++        Log.d("debug", "find - type : " + type +" search :"+ searchItem);
+         if(type == 1) {
+             int position = Integer.parseInt(searchItem);
+             // using binary search here. as list is sorted already.
+@@ -77,47 +97,83 @@
+     }
+     public int getItemsCount(){
+         CalendarDateEvents temp = getDateList().get(getDateList().size() - 1);
++        Log.d("debug", "getItems Count : " +(temp.getOffsetStart() + temp.eventList.size()));
+         return temp.getOffsetStart() + temp.eventList.size();
+     }
+-    public Object[] getListAsArray() { return getDateList().toArray(); }
+-    public int getSectionCount(){ return getDateList().size(); }
++    public Object[] getListAsArray() {
++        Log.d("debug", "get List As Array]: ");
++        return getDateList().toArray();
++    }
++    public int getSectionCount(){
++        Log.d("debug", "get Section size : " + getDateList().size());
++        return getDateList().size();
++    }
+     public int getSectionId(int section){
+         CalendarDateEvents foundDate = find(2, "" + section);
++        Log.d("debug", "get Section ID : " + foundDate.toString());
+         if(foundDate == null)
+             return 0;
+         else
+             return foundDate.getSectionId();
+     }
+-    public CalendarDateEvents getSectionByOffset(int position){ return find(1, ""+position); }
++    public CalendarDateEvents getSectionByOffset(int position){
++        Log.d("debug", "getSectionByOffset : " + position);
++        return find(1, ""+position);
++    }
+     public Object getEventObject(int position){
+         CalendarDateEvents date = getSectionByOffset(position);
++        Log.d("debug", "getEventObject : " + date.toString());
+         if(date == null)
+             return null;
+-        else if (date.getEventList().isEmpty())
++        else if (date.getEventList().isEmpty()) {
++            Log.d("debug", "getEventObject : no events" );
+             return new NoEvents();
+-        else
++        }
++        else {
++            Log.d("debug", "getEventObject : return object" );
+             return date.getEventList().get(position - date.getOffsetStart());
+-    }
++        }
++    }
++    */
+ 
+-
+     private void assemble(LocalDate sd, LocalDate ed){
+         int countDays = Days.daysBetween(sd, ed).getDays();
++        Log.d("debug", "assemble : #days - " + countDays );
+         int startOffset = 0;
+         LocalDate locDate = sd;
++
+         for(int section = 0; section < countDays; section++) {
+-            // for each date, we will assemble its objects.
+-            CalendarDateEvents date_object = new CalendarDateEvents();
+-            date_object.setSectionId(section);
+-            date_object.setDateString(sd.toString(CommonUtils.getInstance().getDateFormatterV2()));
+-            date_object.setOffsetStart(startOffset);
+-            getDateList().add(date_object);
+-            startOffset += date_object.getNumberOfEvents();
+-            // move to next date.
++            Log.d("debug", "assemble : #day - " + locDate.toString() + " section : " + section );
++            DateSection sectionItem = new DateSection();
++            String sDate = locDate.toString(CommonUtils.getInstance().getDateFormatterV2());
++            sectionItem.setDateString(sDate);
++            // add section to object list.
++            getListItems().add(sectionItem);
++            // modify map with offset.
++            getSectionMap().put(sDate, startOffset++);
++            // add corresponding no events item now.
++            getListItems().add(new NoEvents());
++            startOffset++;
++            // add one day
+             locDate = locDate.plusDays(1);
+         }
+     }
+ 
+-    public class CalendarDateEvents {
++    public class DateSection {
++        String dateString;
++        public void setDateString(String s){ dateString = s; }
++        long timestamp;
++    }
++
++    public class EventItem {
++        String dateString;
++        long TimeStamp;
++        String eventName;
++    }
++
++    public class NoEvents{}
++
++    /*public class CalendarDateEvents {
+         int sectionId;
+         public int getSectionId() { return sectionId; }
+         public void setSectionId(int sectionId) { this.sectionId = sectionId; }
+@@ -151,7 +207,12 @@
+             offsetStart = 0;
+             eventList = new ArrayList<>();
+         }
++
++        public String  toString(){
++            return String.format(Locale.getDefault(), "Calendar date event [%s] offset [%s] section [%d] event size [%d]",
++                    getDateString(), getOffsetStart(), getSectionId(), getEventList().size());
+-    }
++        }
++    }*/
+ 
+     public static class Builder {
+         EventsArrayList events;
+@@ -174,16 +235,21 @@
+ 
+         static EventsArrayList.Builder getInstance(){ return new EventsArrayList.Builder(); }
+         EventsArrayList.Builder setStart(String s) throws ParseException {
++            Log.d("debug", "set start: " + s);
+             setStartDate(s);
+             return this;
+         }
+         EventsArrayList.Builder setEnd(String s) throws ParseException{
++            Log.d("debug", "set end: " + s);
+             setEndDate(s);
+             return this;
+         }
+         EventsArrayList build(){
++            Log.d("debug", "build : " + start_date.toString() + " end: " + end_date.toString());
+             events.assemble(start_date, end_date);
+             return events;
+         }
+     }
++
++
+ }
+\ No newline at end of file
