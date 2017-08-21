@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.text.ParseException;
 
 import de.halfbit.pinnedsection.PinnedSectionListView;
@@ -70,5 +73,8 @@ public class CalendarEventListView extends LinearLayout {
         }
     }
 
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AddEventsMessage event) {
+        /* Do something */
+    }
 }
