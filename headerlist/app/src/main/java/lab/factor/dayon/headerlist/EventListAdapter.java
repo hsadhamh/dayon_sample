@@ -17,7 +17,7 @@ import de.halfbit.pinnedsection.PinnedSectionListView;
 
 public class EventListAdapter extends BaseAdapter implements PinnedSectionListView.PinnedSectionListAdapter {
     EventsArrayList eventsList = null;
-    private EventsArrayList getEventsList() { return eventsList; }
+    public EventsArrayList getEventsList() { return eventsList; }
 
     LayoutInflater mInflater = null;
     private LayoutInflater getInflater() {
@@ -107,6 +107,8 @@ public class EventListAdapter extends BaseAdapter implements PinnedSectionListVi
             return getHeaderView(getItem(i), convertview, parent);
         else if(getItemViewType(i) == EventsArrayList.NO_EVENT_ITEM)
             return getNoEventsView(convertview, parent);
+        else if(getItemViewType(i) == EventsArrayList.EVENT_ITEM)
+            return getEventDataView(convertview, parent);
         else
             return null;
     }
@@ -146,6 +148,25 @@ public class EventListAdapter extends BaseAdapter implements PinnedSectionListVi
             holder = (EventViewHolder) convertView.getTag();
         }
         holder.eventText.setText("NO NO NO NO");
+        Log.d("debug", "Adapter - getView + done ");
+        return convertView;
+    }
+
+    private View getEventDataView(View convertView, ViewGroup parent){
+        Log.d("debug", "Adapter - getEventDataView");
+        EventViewHolder holder;
+
+        if (convertView == null) {
+            Log.d("debug", "Adapter - getView + nnew view ");
+            holder = new EventViewHolder();
+            convertView = getInflater().inflate(R.layout.event, parent, false);
+            holder.eventText = (TextView) convertView.findViewById(R.id.text1);
+            convertView.setTag(holder);
+        } else {
+            Log.d("debug", "Adapter - getView + reuse view ");
+            holder = (EventViewHolder) convertView.getTag();
+        }
+        holder.eventText.setText("EVENT - YES YES");
         Log.d("debug", "Adapter - getView + done ");
         return convertView;
     }

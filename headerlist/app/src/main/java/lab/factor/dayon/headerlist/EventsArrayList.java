@@ -39,9 +39,11 @@ public class EventsArrayList {
         if(o == null)
             return -1;
         else  if(o instanceof DateSection)
-            return 0;
+            return DATE_SECTION;
         else if(o instanceof NoEvents)
-            return 1;
+            return NO_EVENT_ITEM;
+        else if (o instanceof EventData)
+            return EVENT_ITEM;
         else
             throw new UnknownError("Invalid object found.");
     }
@@ -69,19 +71,45 @@ public class EventsArrayList {
         }
     }
 
-    private void dummy(){
-        int startOffset = 0;
-        for(int section = 0; section < 5; section++) {
-            Log.d("debug", "dummy : #day - " + "section : " + section );
-            DateSection sectionItem = new DateSection();
-            sectionItem.setDateString("Test");
-            // add section to object list.
-            getListItems().add(sectionItem);
-            // modify map with offset.
-            getSectionMap().put("test", startOffset++);
-            // add corresponding no events item now.
-            getListItems().add(new NoEvents());
-            startOffset++;
+    public void addEventForTheDay(EventData ed){
+        // find offset.
+        Integer iOffset = getSectionMap().get(ed.getDate());
+        int offset = 0;
+        if(iOffset != null)
+            offset += iOffset;
+
+        // check if it is date section
+        Object dateSection = getListItems().get(offset);
+        if(dateSection instanceof DateSection)
+        {
+            int eventsCount  = ((DateSection) dateSection).countEvents;
+            int offsetToInsert;
+            if(eventsCount > 0)
+                offsetToInsert = offset + eventsCount;
+            else {
+                // 1) remove the no events object
+                // 2) then add the first object.
+                offsetToInsert = offset + 1;
+                getListItems().remove(offsetToInsert);
+            }
+
+            if(offsetToInsert > 0) {
+                getListItems().add(offsetToInsert, ed);
+                ((DateSection) dateSection).countEvents += 1;
+            }
+        }
+        else
+            Log.d("debug", "addEventToDay - wrong instance offset");
+    }
+
+    public void removeEventsForTheDay(EventData ed){
+        // find offset.
+        int offset = getSectionMap().get(ed.getDate());
+        // check if it is date section
+        Object dateSection = getListItems().get(offset);
+        if(dateSection instanceof DateSection) {
+        }
+        else{
         }
     }
 
@@ -90,6 +118,7 @@ public class EventsArrayList {
         public String getDateString() { return dateString; }
         public void setDateString(String s){ dateString = s; }
         long timestamp;
+        int countEvents;
     }
 
     public class EventItem {
@@ -132,10 +161,7 @@ public class EventsArrayList {
         }
         EventsArrayList build(){
             Log.d("debug", "build : " + start_date.toString() + " end: " + end_date.toString());
-            if(true)
-                events.assemble(start_date, end_date);
-            else
-                events.dummy();
+            events.assemble(start_date, end_date);
             return events;
         }
     }
