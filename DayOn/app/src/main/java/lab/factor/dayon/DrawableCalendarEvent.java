@@ -4,8 +4,8 @@ package lab.factor.dayon;
  * Created by hassanhussain on 9/10/2017.
  */
 
-import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent;
-import com.github.tibolte.agendacalendarview.models.CalendarEvent;
+import lab.factor.agendaview.models.BaseCalendarEvent;
+import lab.factor.agendaview.models.CalendarEvent;
 
 import java.util.Calendar;
 

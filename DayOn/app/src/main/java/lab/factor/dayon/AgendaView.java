@@ -4,12 +4,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
-import com.github.tibolte.agendacalendarview.AgendaCalendarView;
-import com.github.tibolte.agendacalendarview.CalendarPickerController;
-import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent;
-import com.github.tibolte.agendacalendarview.models.CalendarEvent;
-import com.github.tibolte.agendacalendarview.models.DayItem;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -17,6 +11,11 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lab.factor.agendaview.AgendaCalendarView;
+import lab.factor.agendaview.CalendarPickerController;
+import lab.factor.agendaview.models.BaseCalendarEvent;
+import lab.factor.agendaview.models.CalendarEvent;
+import lab.factor.agendaview.models.IDayItem;
 
 public class AgendaView extends AppCompatActivity implements CalendarPickerController {
 
@@ -42,6 +41,8 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
         mockList(eventList);
 
         mCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
+
+        mCalendarView.enableCalenderView(true);
     }
 
     private void mockList(List<CalendarEvent> eventList) {
@@ -73,7 +74,7 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
     }
 
     @Override
-    public void onDaySelected(DayItem dayItem) {
+    public void onDaySelected(IDayItem dayItem) {
         
     }
 

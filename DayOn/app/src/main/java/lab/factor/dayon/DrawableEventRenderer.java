@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.github.tibolte.agendacalendarview.render.EventRenderer;
+import lab.factor.agendaview.render.EventRenderer;
 
 public class DrawableEventRenderer extends EventRenderer<DrawableCalendarEvent> {
 
@@ -17,10 +17,10 @@ public class DrawableEventRenderer extends EventRenderer<DrawableCalendarEvent> 
     @Override
     public void render(View view, DrawableCalendarEvent event) {
         ImageView imageView = (ImageView) view.findViewById(R.id.view_agenda_event_image);
-        TextView txtTitle = (TextView) view.findViewById(com.github.tibolte.agendacalendarview.R.id.view_agenda_event_title);
-        TextView txtLocation = (TextView) view.findViewById(com.github.tibolte.agendacalendarview.R.id.view_agenda_event_location);
-        LinearLayout descriptionContainer = (LinearLayout) view.findViewById(com.github.tibolte.agendacalendarview.R.id.view_agenda_event_description_container);
-        LinearLayout locationContainer = (LinearLayout) view.findViewById(com.github.tibolte.agendacalendarview.R.id.view_agenda_event_location_container);
+        TextView txtTitle = (TextView) view.findViewById(lab.factor.agendaview.R.id.view_agenda_event_title);
+        TextView txtLocation = (TextView) view.findViewById(lab.factor.agendaview.R.id.view_agenda_event_location);
+        LinearLayout descriptionContainer = (LinearLayout) view.findViewById(lab.factor.agendaview.R.id.view_agenda_event_description_container);
+        LinearLayout locationContainer = (LinearLayout) view.findViewById(lab.factor.agendaview.R.id.view_agenda_event_location_container);
 
         descriptionContainer.setVisibility(View.VISIBLE);
 
@@ -37,13 +37,13 @@ public class DrawableEventRenderer extends EventRenderer<DrawableCalendarEvent> 
             locationContainer.setVisibility(View.GONE);
         }
 
-        if (event.getTitle().equals(view.getResources().getString(com.github.tibolte.agendacalendarview.R.string.agenda_event_no_events))) {
+        if (event.getTitle().equals(view.getResources().getString(lab.factor.agendaview.R.string.agenda_event_no_events))) {
             txtTitle.setTextColor(view.getResources().getColor(android.R.color.black));
         } else {
-            txtTitle.setTextColor(view.getResources().getColor(com.github.tibolte.agendacalendarview.R.color.theme_text_icons));
+            txtTitle.setTextColor(view.getResources().getColor(lab.factor.agendaview.R.color.theme_text_icons));
         }
         descriptionContainer.setBackgroundColor(event.getColor());
-        txtLocation.setTextColor(view.getResources().getColor(com.github.tibolte.agendacalendarview.R.color.theme_text_icons));
+        txtLocation.setTextColor(view.getResources().getColor(lab.factor.agendaview.R.color.theme_text_icons));
     }
 
     @Override

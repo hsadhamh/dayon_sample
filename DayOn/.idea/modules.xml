@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DayOn.iml" filepath="$PROJECT_DIR$/DayOn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/agendaview/agendaview.iml" filepath="$PROJECT_DIR$/agendaview/agendaview.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
