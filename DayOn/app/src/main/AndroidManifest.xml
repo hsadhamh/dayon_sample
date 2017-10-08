@@ -17,6 +17,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".AgendaView"></activity>
+
+        <service
+            android:name="com.octo.android.robospice.UncachedSpiceService"
+            android:exported="false" >
+
+        </service>
+
+
+
     </application>
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

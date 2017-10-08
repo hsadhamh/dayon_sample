@@ -3,6 +3,13 @@ package lab.factor.dayon;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+
+import com.octo.android.robospice.SpiceManager;
+import com.octo.android.robospice.UncachedSpiceService;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.SpiceRequest;
+import com.octo.android.robospice.request.listener.RequestListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,9 +24,15 @@ import lab.factor.agendaview.models.BaseCalendarEvent;
 import lab.factor.agendaview.models.CalendarEvent;
 import lab.factor.agendaview.models.IDayItem;
 
+;
+
+
+
 public class AgendaView extends AppCompatActivity implements CalendarPickerController {
 
     @BindView(R.id.agenda_calendar_view) AgendaCalendarView mCalendarView;
+    SpiceManager mTaskManager = new SpiceManager(UncachedSpiceService.class);
+    List<CalendarEvent> eventList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +50,81 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
 
-        List<CalendarEvent> eventList = new ArrayList<>();
-        mockList(eventList);
-
-        mCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
+        mCalendarView.init(minDate, maxDate, Locale.getDefault(), this);
 
         mCalendarView.enableCalenderView(true);
+
+        performRequest();
+
     }
 
-    private void mockList(List<CalendarEvent> eventList) {
+
+    @Override
+    public void onDaySelected(IDayItem dayItem) {
+        
+    }
+
+    @Override
+    public void onEventSelected(CalendarEvent event) {
+
+    }
+
+    @Override
+    public void onScrollToDate(Calendar calendar) {
+
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        mTaskManager.start(this);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        mTaskManager.shouldStop();
+        super.onStop();
+    }
+
+    private void performRequest() {
+        Void aVoid = null;
+        LoadEvents request = new LoadEvents();
+        mTaskManager.execute(request, new LoadEventListener());
+    }
+
+    static class LoadEvents extends SpiceRequest<String>{
+
+        LoadEvents() {
+            super(String.class);
+        }
+        @Override
+        public String loadDataFromNetwork() throws Exception {
+            Thread.sleep(20*1000);
+            return "done";
+        }
+    }
+
+    class LoadEventListener implements RequestListener<String> {
+
+        @Override
+        public void onRequestFailure(SpiceException spiceException) {
+            Toast.makeText(AgendaView.this, "Failed to load.", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onRequestSuccess(String str) {
+            Toast.makeText(AgendaView.this, "Success load.", Toast.LENGTH_SHORT).show();
+            mockList();
+            mCalendarView.sendEvents(eventList);
+        }
+    }
+
+    private void mockList() {
         Calendar startTime1 = Calendar.getInstance();
         Calendar endTime1 = Calendar.getInstance();
         endTime1.add(Calendar.MONTH, 1);
@@ -73,23 +152,4 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
         eventList.add(event3);
     }
 
-    @Override
-    public void onDaySelected(IDayItem dayItem) {
-        
-    }
-
-    @Override
-    public void onEventSelected(CalendarEvent event) {
-
-    }
-
-    @Override
-    public void onScrollToDate(Calendar calendar) {
-
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
 }

@@ -16,6 +16,11 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
 import lab.factor.agendaview.agenda.AgendaAdapter;
 import lab.factor.agendaview.agenda.AgendaView;
 import lab.factor.agendaview.calendar.CalendarView;
@@ -31,11 +36,6 @@ import lab.factor.agendaview.utils.BusProvider;
 import lab.factor.agendaview.utils.Events;
 import lab.factor.agendaview.utils.ListViewScrollTracker;
 import lab.factor.agendaview.widgets.FloatingActionButton;
-
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
@@ -205,9 +205,31 @@ public class AgendaCalendarView extends FrameLayout implements StickyListHeaders
         mAgendaView.getAgendaListView().setAdapter(agendaAdapter);
         mAgendaView.getAgendaListView().setOnStickyHeaderChangedListener(this);
 
+        /*CalendarManager.getInstance().loadEvents(eventList, new BaseCalendarEvent());
+        BusProvider.getInstance().send(new Events.EventsFetched());
+        Log.d(LOG_TAG, "CalendarEventTask finished");*/
+
+        // add default event renderer
+        addEventRenderer(new DefaultEventRenderer());
+    }
+
+    public void init(Calendar minDate, Calendar maxDate, Locale locale, CalendarPickerController calendarPickerController) {
+        mCalendarPickerController = calendarPickerController;
+
+        CalendarManager.getInstance(getContext()).buildCal(minDate, maxDate, locale, new DayItem(), new WeekItem());
+
+        // Feed our views with weeks list and events
+        mCalendarView.init(CalendarManager.getInstance(getContext()), mCalendarDayTextColor, mCalendarCurrentDayColor, mCalendarPastDayTextColor);
+
+        // Load agenda events and scroll to current day
+        AgendaAdapter agendaAdapter = new AgendaAdapter(mAgendaCurrentDayTextColor);
+        mAgendaView.getAgendaListView().setAdapter(agendaAdapter);
+        mAgendaView.getAgendaListView().setOnStickyHeaderChangedListener(this);
+
+        List<CalendarEvent> eventList = new ArrayList<>();
         CalendarManager.getInstance().loadEvents(eventList, new BaseCalendarEvent());
         BusProvider.getInstance().send(new Events.EventsFetched());
-        Log.d(LOG_TAG, "CalendarEventTask finished");
+        Log.d(LOG_TAG, "Load empty events finished");
 
         // add default event renderer
         addEventRenderer(new DefaultEventRenderer());
@@ -247,6 +269,15 @@ public class AgendaCalendarView extends FrameLayout implements StickyListHeaders
 
     public void enableFloatingIndicator(boolean enable) {
         mFloatingActionButton.setVisibility(enable ? VISIBLE : GONE);
+    }
+
+    public void sendEvents(List<CalendarEvent> eventList){
+        CalendarManager.getInstance().loadEvents(eventList, new BaseCalendarEvent());
+        BusProvider.getInstance().send(new Events.EventsFetched());
+        Log.d(LOG_TAG, "SendCalendarEventTask finished");
+
+        // add default event renderer
+        addEventRenderer(new DefaultEventRenderer());
     }
 
     // endregion
