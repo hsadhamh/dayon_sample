@@ -41,7 +41,15 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
 
         ButterKnife.bind(this);
 
-        // minimum and maximum date of our calendar
+        initCalendar();
+
+        performRequest();
+
+    }
+
+    public void initCalendar()
+    {
+// minimum and maximum date of our calendar
         // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
         Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
@@ -50,12 +58,9 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
 
-        mCalendarView.init(minDate, maxDate, Locale.getDefault(), this);
+        mCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
 
         mCalendarView.enableCalenderView(true);
-
-        performRequest();
-
     }
 
 
@@ -92,7 +97,6 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
     }
 
     private void performRequest() {
-        Void aVoid = null;
         LoadEvents request = new LoadEvents();
         mTaskManager.execute(request, new LoadEventListener());
     }
@@ -120,7 +124,7 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
         public void onRequestSuccess(String str) {
             Toast.makeText(AgendaView.this, "Success load.", Toast.LENGTH_SHORT).show();
             mockList();
-            mCalendarView.sendEvents(eventList);
+            initCalendar();
         }
     }
 

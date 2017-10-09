@@ -205,9 +205,9 @@ public class AgendaCalendarView extends FrameLayout implements StickyListHeaders
         mAgendaView.getAgendaListView().setAdapter(agendaAdapter);
         mAgendaView.getAgendaListView().setOnStickyHeaderChangedListener(this);
 
-        /*CalendarManager.getInstance().loadEvents(eventList, new BaseCalendarEvent());
+        CalendarManager.getInstance().loadEvents(eventList, new BaseCalendarEvent());
         BusProvider.getInstance().send(new Events.EventsFetched());
-        Log.d(LOG_TAG, "CalendarEventTask finished");*/
+        Log.d(LOG_TAG, "CalendarEventTask finished");
 
         // add default event renderer
         addEventRenderer(new DefaultEventRenderer());
