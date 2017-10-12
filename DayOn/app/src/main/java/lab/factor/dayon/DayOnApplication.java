@@ -8,6 +8,10 @@ import com.github.hussainderry.securepreferences.model.SecurityConfig;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import lab.factor.agendaview.models.CalendarEvent;
 import lab.factor.dayon.utils.database.DaoSession;
 
 /**
@@ -31,6 +35,9 @@ public class DayOnApplication extends Application {
 
     private static SecurePreferences mPreferences;
     public static SecurePreferences getPrefManager() { return mPreferences; }
+
+    private static List<CalendarEvent> mListEvents = new ArrayList<>();
+    public static List<CalendarEvent> getEventsList() { return mListEvents; }
 
     @Override
     public void onCreate() {
