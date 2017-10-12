@@ -21,18 +21,15 @@ public class GenericUtils {
 
     public static boolean initDatabaseV2(Context context)
     {
-        //
         //  Check if DB exists already. If not, we need to run DB initialize code.
-        //
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context,
                 DayOnApplication.isEncrypted() ? "events-db-encrypted" : "events-db");
         Database db = DayOnApplication.isEncrypted()?
                 helper.getEncryptedWritableDb(DayOnApplication.getDatabasePassword()) : helper.getWritableDb();
         DayOnApplication.setDaoSession(new DaoMaster(db).newSession());
 
-        if(CheckIfDBNeedInitialize()) {
+        if(CheckIfDBNeedInitialize())
             GenericUtils.startAsyncDbSynchronization(context);
-        }
         return true;
     }
 
