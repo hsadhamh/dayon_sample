@@ -7,6 +7,10 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.octo.android.robospice.request.SpiceRequest;
 
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -16,7 +20,6 @@ import lab.factor.dayon.DayOnApplication;
 import lab.factor.dayon.R;
 import lab.factor.dayon.utils.JsonSerializer;
 import lab.factor.dayon.utils.database.Events;
-import lab.factor.dayon.utils.database.EventsDao;
 import lab.factor.dayon.utils.json.EventCategory.Category;
 import lab.factor.dayon.utils.json.EventProperty;
 import lab.factor.dayon.utils.json.Location;
@@ -42,17 +45,18 @@ public class LoadEventsRequest extends SpiceRequest<Boolean> {
 
         DayOnApplication.getEventsList().clear();
 
-        List<Events> listEvents = DayOnApplication.getDaoSession().getEventsDao().queryBuilder()
-                .where(EventsDao.Properties.Start_date.ge(mlStartTime))
-                .where(EventsDao.Properties.End_date.le(mlEndTime)).list();
+        QueryBuilder qb = DayOnApplication.getDaoSession().getEventsDao().queryBuilder();
+        //qb.whereOr(EventsDao.Properties.Start_date.ge(mlStartTime), EventsDao.Properties.End_date.le(mlEndTime));
+
+        List<Events> listEvents = qb.list();
 
         for (Events ev : listEvents){
 
-            Calendar startTime1 = Calendar.getInstance(Locale.getDefault());
-            startTime1.setTimeInMillis(ev.getStart_date());
+            DateTime startEventTime = new DateTime(ev.getStart_date(), DateTimeZone.UTC);
+            Calendar startTime1 = startEventTime.toCalendar(Locale.getDefault());
 
-            Calendar endTime1 = Calendar.getInstance(Locale.getDefault());
-            endTime1.setTimeInMillis(ev.getEnd_date());
+            DateTime endEventTime = new DateTime(ev.getEnd_date(), DateTimeZone.UTC);
+            Calendar endTime1 = startEventTime.toCalendar(Locale.getDefault());
 
             String sName = ev.getName();
             String sEventProperty = ev.getProperty();

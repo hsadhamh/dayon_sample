@@ -9,6 +9,10 @@ import com.octo.android.robospice.UncachedSpiceService;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -35,6 +39,10 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
     Calendar minDate = null;
     Calendar maxDate = null;
 
+    LocalDate mToday = null;
+    LocalDate mMinDate = null;
+    LocalDate mMaxDate = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +58,19 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
 
     public void initCalendar()
     {
-// minimum and maximum date of our calendar
-        // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
-        minDate = Calendar.getInstance();
-        maxDate = Calendar.getInstance();
 
-        minDate.add(Calendar.MONTH, -2);
-        minDate.set(Calendar.DAY_OF_MONTH, 1);
-        maxDate.add(Calendar.YEAR, 1);
+        mToday = LocalDate.now();
+
+        LocalDate tempDate = mToday.minusMonths(2);
+        mMinDate = new LocalDate(tempDate.getYear(), tempDate.getMonthOfYear()-2, 1);
+
+        tempDate = mToday.plusMonths(12);
+        mMaxDate = new LocalDate(tempDate.getYear(), tempDate.getMonthOfYear(), 1);
+
+        // minimum and maximum date of our calendar
+        // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
+        minDate = mMinDate.toDateTimeAtCurrentTime().toCalendar(Locale.getDefault());
+        maxDate = mMaxDate.toDateTimeAtCurrentTime().toCalendar(Locale.getDefault());
 
         mCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
 
@@ -98,7 +111,12 @@ public class AgendaView extends AppCompatActivity implements CalendarPickerContr
     }
 
     private void performRequest() {
-        LoadEventsRequest request = new LoadEventsRequest(getApplicationContext(), minDate.getTimeInMillis(), maxDate.getTimeInMillis());
+
+        DateTime minDateCon = new DateTime(mMinDate.getYear(), mMinDate.getMonthOfYear(), mMinDate.getDayOfMonth(), 0, 0,0, DateTimeZone.UTC);
+        DateTime maxDateCon = new DateTime(mMaxDate.getYear(), mMaxDate.getMonthOfYear(), mMaxDate.getDayOfMonth(), 23, 59,59, DateTimeZone.UTC);
+
+        LoadEventsRequest request = new LoadEventsRequest(getApplicationContext(),
+                minDateCon.getMillis()/1000, maxDateCon.getMillis()/1000);
         mTaskManager.execute(request, new LoadEventListener());
     }
 
