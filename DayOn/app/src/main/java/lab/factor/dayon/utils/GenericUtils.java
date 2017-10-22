@@ -28,7 +28,7 @@ public class GenericUtils {
                 helper.getEncryptedWritableDb(DayOnApplication.getDatabasePassword()) : helper.getWritableDb();
         DayOnApplication.setDaoSession(new DaoMaster(db).newSession());
 
-        if(CheckIfDBNeedInitialize())
+        //if(CheckIfDBNeedInitialize())
             GenericUtils.startAsyncDbSynchronization(context);
         return true;
     }
@@ -60,6 +60,8 @@ public class GenericUtils {
             Thread.sleep(1000);
             EventsDao newEvent = DayOnApplication.getDaoSession().getEventsDao();
 
+            newEvent.deleteAll();
+
             for(Event event : listEvents.events){
                 //  TODO: insert to table.
                 Events eventInfo = new Events();
@@ -67,12 +69,16 @@ public class GenericUtils {
                 eventInfo.setCategory(event.getCategory());
                 eventInfo.setFlags(event.getFlags());
 
-                eventInfo.setLocations(JsonSerializer.getInstance().SerializeToString(event.getLocations(), false));
+                String sLocations  = JsonSerializer.getInstance().SerializeToString(event.getLocations(), false);
+                eventInfo.setLocations(sLocations);
 
                 eventInfo.setName(event.getName());
                 eventInfo.setProperty(JsonSerializer.getInstance().SerializeToString(event.getProperty(), false));
                 eventInfo.setSub_category(event.getSub_category());
                 eventInfo.setTags("");
+
+                eventInfo.setEnd_date(event.getEnd_date().longValue());
+                eventInfo.setStart_date(event.getStart_date().longValue());
 
                 newEvent.insert(eventInfo);
                 Logger.d("Inserted information [%s].", eventInfo.getName());

@@ -3,7 +3,6 @@ package lab.factor.dayon.utils.json;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Recurrence {
 	public static enum RecurType{
 		DAY(1),

@@ -3,23 +3,20 @@ package lab.factor.dayon.services;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.octo.android.robospice.request.SpiceRequest;
 
 import org.greenrobot.greendao.query.QueryBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import lab.factor.agendaview.models.BaseCalendarEvent;
 import lab.factor.dayon.DayOnApplication;
 import lab.factor.dayon.R;
 import lab.factor.dayon.utils.JsonSerializer;
 import lab.factor.dayon.utils.database.Events;
+import lab.factor.dayon.utils.database.EventsDao;
 import lab.factor.dayon.utils.json.EventCategory.Category;
 import lab.factor.dayon.utils.json.EventProperty;
 import lab.factor.dayon.utils.json.Location;
@@ -45,18 +42,18 @@ public class LoadEventsRequest extends SpiceRequest<Boolean> {
 
         DayOnApplication.getEventsList().clear();
 
-        QueryBuilder qb = DayOnApplication.getDaoSession().getEventsDao().queryBuilder();
-        //qb.whereOr(EventsDao.Properties.Start_date.ge(mlStartTime), EventsDao.Properties.End_date.le(mlEndTime));
+        QueryBuilder<Events> qb = DayOnApplication.getDaoSession().getEventsDao().queryBuilder();
+        qb.where(EventsDao.Properties.Start_date.ge(mlStartTime), EventsDao.Properties.End_date.le(mlEndTime));
 
         List<Events> listEvents = qb.list();
 
-        for (Events ev : listEvents){
+        for (Events ev : listEvents) {
 
-            DateTime startEventTime = new DateTime(ev.getStart_date(), DateTimeZone.UTC);
-            Calendar startTime1 = startEventTime.toCalendar(Locale.getDefault());
+            Calendar startDate = Calendar.getInstance();
+            startDate.setTimeInMillis(ev.getStart_date()*1000);
 
-            DateTime endEventTime = new DateTime(ev.getEnd_date(), DateTimeZone.UTC);
-            Calendar endTime1 = startEventTime.toCalendar(Locale.getDefault());
+            Calendar endDate = Calendar.getInstance();
+            endDate.setTimeInMillis(ev.getEnd_date()*1000);
 
             String sName = ev.getName();
             String sEventProperty = ev.getProperty();
@@ -66,15 +63,18 @@ public class LoadEventsRequest extends SpiceRequest<Boolean> {
             EventProperty oProperty = (EventProperty) JsonSerializer.getInstance().UnserializeToObject(sEventProperty, EventProperty.class);
             String sDesc = oProperty.getDescription();
 
-            CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, Location.class);
-            List<Location> listLocations = (List<Location>) JsonSerializer.getInstance().UnserializeToObject(sLocation, typeReference.getRawClass());
+            List<Location> listEventLocations = new ArrayList<>();
+            Object listLocations = JsonSerializer.getInstance().ConvertToObjectList(ev.getLocations(), Location.class);
+            if (listLocations != null) {
+                listEventLocations = (List<Location>)listLocations;
+            }
 
             int nColor = ContextCompat.getColor(mContext, R.color.orange_dark);
 
-            for(Location location : listLocations)
+            for(Location location : listEventLocations)
             {
                 BaseCalendarEvent baseEvent = new BaseCalendarEvent(sName, sDesc,
-                        location.getState() + ", " + location.getCountry(), nColor, startTime1, endTime1, bAllDay);
+                        location.getState() + ", " + location.getCountry(), nColor, startDate, endDate, bAllDay);
                 DayOnApplication.getEventsList().add(baseEvent);
             }
         }

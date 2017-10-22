@@ -3,7 +3,6 @@ package lab.factor.dayon.utils.json;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class WebReference {
 	public static enum WebRefType{
 		WIKI (1),

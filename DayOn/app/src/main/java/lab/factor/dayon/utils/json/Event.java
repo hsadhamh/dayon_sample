@@ -1,5 +1,6 @@
 package lab.factor.dayon.utils.json;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,9 @@ public class Event {
 	long sub_category;
 	List<Location> locations;
 	long flags;
-	List<String> Tags;
+	List<String> tags;
+	BigInteger start_date;
+	BigInteger end_date;
 	
 	public Event() {
 		super();
@@ -24,7 +27,10 @@ public class Event {
 		sub_category = 0;
 		locations = null;
 		flags = 0;
-		Tags = null;
+		tags = null;
+		start_date = BigInteger.ZERO;
+		end_date = BigInteger.ZERO;
+		
 	}
 	
 	public long getId() {
@@ -80,11 +86,23 @@ public class Event {
 		this.flags = flags;
 	}
 	public List<String> getTags() {
-		if(Tags == null)
-			Tags = new ArrayList<String>();
-		return Tags;
+		if(tags == null)
+			tags = new ArrayList<String>();
+		return tags;
 	}
 	public void setTags(List<String> tags) {
-		Tags = tags;
+		this.tags = tags;
+	}
+	public BigInteger getStart_date() {
+		return start_date;
+	}
+	public void setStart_date(BigInteger start_date) {
+		this.start_date = start_date;
+	}
+	public BigInteger getEnd_date() {
+		return end_date;
+	}
+	public void setEnd_date(BigInteger end_date) {
+		this.end_date = end_date;
 	}
 }

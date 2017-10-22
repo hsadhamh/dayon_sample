@@ -8,7 +8,7 @@ public class Location {
 	String AreaName;
 	String city;
 	String state;
-	String Country;
+	String country;
 	BigInteger ZipCode;
 	public String getHouseNo() {
 		return HouseNo;
@@ -41,10 +41,10 @@ public class Location {
 		this.state = state;
 	}
 	public String getCountry() {
-		return Country;
+		return country;
 	}
 	public void setCountry(String country) {
-		Country = country;
+		this.country = country;
 	}
 	public BigInteger getZipCode() {
 		return ZipCode;
