@@ -5,8 +5,10 @@ import android.app.Application;
 import com.github.hussainderry.securepreferences.SecurePreferences;
 import com.github.hussainderry.securepreferences.model.DigestType;
 import com.github.hussainderry.securepreferences.model.SecurityConfig;
-import com.orhanobut.logger.LogLevel;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.PrettyFormatStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +53,17 @@ public class DayOnApplication extends Application {
         super.onTerminate();
     }
 
-    private void initLogger(){ Logger.init("debug-lab").logLevel(LogLevel.FULL); }
+    private void initLogger(){
+        FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
+                .tag("DO_DEBUG")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .build();
+
+        Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy){
+            @Override public boolean isLoggable(int priority, String tag) {
+                return BuildConfig.DEBUG;
+            }
+        });
+    }
 
     private void initPreferences(){
         // Full Configurations
@@ -64,6 +76,5 @@ public class DayOnApplication extends Application {
 
         mPreferences = SecurePreferences.getInstance(DayOnApplication.this, getFilePassword(), fullConfig);
     }
-
-
+    
 }
