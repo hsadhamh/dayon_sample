@@ -64,6 +64,7 @@ public class AgendaCalendarView extends FrameLayout implements StickyListHeaders
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
             int scrollY = mAgendaListViewScrollTracker.calculateScrollY(firstVisibleItem, visibleItemCount);
             if (scrollY != 0) {
                 mFloatingActionButton.show();
