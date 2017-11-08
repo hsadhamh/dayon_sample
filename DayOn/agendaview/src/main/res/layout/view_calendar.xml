@@ -32,8 +32,8 @@
         android:drawSelectorOnTop="false"
         android:dividerHeight="1dp"
         android:divider="@color/calendar_divider_color"
-        android:listSelector="@android:color/transparent"
+
         android:overScrollMode="never"
         android:scrollbars="none" />
-
+    <!--android:listSelector="@android:color/transparent"-->
 </merge>
