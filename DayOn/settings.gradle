@@ -1,1 +1,1 @@
-include ':app', ':agendaview'
+include ':app', ':agendaview', ':combimonthview'

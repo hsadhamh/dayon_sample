@@ -76,5 +76,5 @@ public class DayOnApplication extends Application {
 
         mPreferences = SecurePreferences.getInstance(DayOnApplication.this, getFilePassword(), fullConfig);
     }
-    
+
 }
