@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Day On</string>
+    <string name="calendar_permission_required">Calendar access is required to manage your events</string>
+    <string name="grant_access">Grant access</string>
+    <string name="location_permission_required">Updating weather requires location access</string>
+
+    <string name="sample_btn_month">Sample Month View</string>
+    <string name="sample_btn_month_pager">Sample Month View Pager</string>
+    <string name="sample_btn_agenda">Agenda Simple</string>
+</resources>
